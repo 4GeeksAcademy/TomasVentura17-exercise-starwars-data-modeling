@@ -9,36 +9,36 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'user'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    user_name = Column(String(250), nullable=False)
-    favorites_id = Column(Integer, ForeignKey('favorites.id'))
+    email = Column(String(250), nullable=False)
+    password = Column(String(250), nullable=False)
+    first_name = Column(String(250), nullable=True)
+    last_name = Column(String(250), nullable=True)
+    favorites = relationship("Favorite")
 
-class Favorites(Base):
-    __tablename__ = 'favorites'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Favorite(Base):
+    __tablename__ = 'favorite'
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship("User", back_populates="favorites")
     planet_id = Column(Integer, ForeignKey('planet.id'))
-    planet_name = Column(String(250))
-    character_id = Column(String(250), nullable=False)
-    character_name = Column(Integer, ForeignKey('character.id'))
-    user = relationship(User)
+    planet = relationship("Planet", back_populates="favorites")
+    character_id = Column(Integer, ForeignKey('character.id'))
+    character = relationship("Character")
 
 class Planet(Base):
     __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
-    planet_name = Column(String(250), nullable=False)
-    population = Column(String(250))
-    favorites = relationship(Favorites)
+    name = Column(String(250), nullable=False)
+    description = Column(String(1000), nullable=True)
+    favorites = relationship("Favorite")
 
-class Planet(Base):
+class Character(Base):
     __tablename__ = 'character'
     id = Column(Integer, primary_key=True)
-    character_name = Column(String(250), nullable=False)
-    age = Column(Integer)
-    favorites = relationship(Favorites)
+    name = Column(String(250), nullable=False)
+    description = Column(String(1000), nullable=True)
+    favorites = relationship("Favorite")
 
     def to_dict(self):
         return {}
